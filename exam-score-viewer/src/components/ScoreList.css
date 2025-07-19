@@ -1,21 +1,11 @@
-body {
-  background: linear-gradient(to top, #b388f2, #a477ec, #fca5b7);
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
-}
-
 /* Container */
 .score-container {
-  max-width: 900px;
-  margin: 120px auto 80px auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  box-sizing: border-box;
   padding: 40px 50px;
   background: linear-gradient(to bottom, #cc5de8, #5c7cfa);
-  border-radius: 20px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
-  color: #ffffff;
-  text-align: center;
-  transition: all 0.3s ease-in-out;
 }
 
 .score-container:hover {
@@ -28,6 +18,7 @@ body {
   color: white;
   margin-bottom: 30px;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+  text-align: center;
 }
 
 .score-table {
@@ -68,6 +59,8 @@ body {
 .score-table td:nth-child(4) {
   font-style: italic;
   color: #666;
+  text-align: center;
+  vertical-align: middle;
 }
 
 .pagination {

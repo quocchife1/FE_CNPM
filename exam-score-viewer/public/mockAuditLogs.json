@@ -1,0 +1,177 @@
+[
+  {
+    "module": "Đăng nhập",
+    "action": "[admin] Đăng nhập",
+    "description": "Client IP:127.0.0.1",
+    "username": "admin",
+    "timestamp": "2025-07-19 09:00:00"
+  },
+  {
+    "module": "Sản phẩm",
+    "action": "Cập nhật sản phẩm",
+    "description": "Thay đổi giá bán",
+    "username": "admin",
+    "timestamp": "2025-07-19 08:45:00"
+  },
+  {
+    "module": "Cấu hình",
+    "action": "Chỉnh sửa cấu hình",
+    "description": "Sửa thông số hệ thống",
+    "username": "system",
+    "timestamp": "2025-07-19 08:30:00"
+  },
+  {
+    "module": "Người dùng",
+    "action": "Tạo người dùng",
+    "description": "user3 đã được tạo",
+    "username": "admin",
+    "timestamp": "2025-07-19 08:20:00"
+  },
+  {
+    "module": "Đăng nhập",
+    "action": "[admin] Thoát khỏi hệ thống",
+    "description": "Client IP:127.0.0.1",
+    "username": "admin",
+    "timestamp": "2025-07-19 08:15:00"
+  },
+  {
+    "module": "Đăng nhập",
+    "action": "[user1] Đăng nhập",
+    "description": "Client IP:192.168.0.10",
+    "username": "user1",
+    "timestamp": "2025-07-19 08:10:00"
+  },
+  {
+    "module": "Đơn hàng",
+    "action": "Xóa đơn hàng",
+    "description": "Mã đơn: DH00123",
+    "username": "admin",
+    "timestamp": "2025-07-19 08:00:00"
+  },
+  {
+    "module": "Đơn hàng",
+    "action": "Cập nhật trạng thái",
+    "description": "Đơn hàng chuyển sang 'Đang giao'",
+    "username": "user2",
+    "timestamp": "2025-07-19 07:55:00"
+  },
+  {
+    "module": "Sản phẩm",
+    "action": "Thêm sản phẩm mới",
+    "description": "SP: Máy in Canon",
+    "username": "admin",
+    "timestamp": "2025-07-19 07:50:00"
+  },
+  {
+    "module": "Người dùng",
+    "action": "Khóa tài khoản",
+    "description": "user4 bị khóa",
+    "username": "system",
+    "timestamp": "2025-07-19 07:45:00"
+  },
+  {
+    "module": "Đăng nhập",
+    "action": "[user2] Đăng nhập",
+    "description": "Client IP:192.168.0.22",
+    "username": "user2",
+    "timestamp": "2025-07-19 07:30:00"
+  },
+  {
+    "module": "Đăng nhập",
+    "action": "[admin] Đăng nhập",
+    "description": "Client IP:127.0.0.1",
+    "username": "admin",
+    "timestamp": "2025-07-19 07:00:00"
+  },
+  {
+    "module": "Người dùng",
+    "action": "Sửa thông tin",
+    "description": "Đổi email user3",
+    "username": "admin",
+    "timestamp": "2025-07-19 06:55:00"
+  },
+  {
+    "module": "Cấu hình",
+    "action": "Cập nhật email server",
+    "description": "smtp.mail.com",
+    "username": "system",
+    "timestamp": "2025-07-19 06:50:00"
+  },
+  {
+    "module": "Đăng nhập",
+    "action": "[user1] Thoát khỏi hệ thống",
+    "description": "Client IP:192.168.0.10",
+    "username": "user1",
+    "timestamp": "2025-07-19 06:40:00"
+  },
+  {
+    "module": "Sản phẩm",
+    "action": "Xóa sản phẩm",
+    "description": "SP123 bị xóa",
+    "username": "admin",
+    "timestamp": "2025-07-19 06:30:00"
+  },
+  {
+    "module": "Đơn hàng",
+    "action": "Tạo mới đơn hàng",
+    "description": "Đơn DH00127 được tạo",
+    "username": "user1",
+    "timestamp": "2025-07-19 06:20:00"
+  },
+  {
+    "module": "Người dùng",
+    "action": "Đổi mật khẩu",
+    "description": "user2 đổi mật khẩu",
+    "username": "user2",
+    "timestamp": "2025-07-19 06:10:00"
+  },
+  {
+    "module": "Cấu hình",
+    "action": "Tắt bảo trì hệ thống",
+    "description": "Chuyển trạng thái: Bảo trì → Bình thường",
+    "username": "system",
+    "timestamp": "2025-07-19 06:00:00"
+  },
+  {
+    "module": "Đăng nhập",
+    "action": "[user2] Đăng nhập thất bại",
+    "description": "Sai mật khẩu 3 lần",
+    "username": "user2",
+    "timestamp": "2025-07-19 05:50:00"
+  },
+  {
+    "module": "Đơn hàng",
+    "action": "Hủy đơn hàng",
+    "description": "Đơn DH00129 bị hủy",
+    "username": "user1",
+    "timestamp": "2025-07-19 05:40:00"
+  },
+  {
+    "module": "Người dùng",
+    "action": "Tạo vai trò mới",
+    "description": "role: Quản lý bán hàng",
+    "username": "admin",
+    "timestamp": "2025-07-19 05:30:00"
+  },
+  {
+    "module": "Đăng nhập",
+    "action": "[admin] Thoát khỏi hệ thống",
+    "description": "Client IP:127.0.0.1",
+    "username": "admin",
+    "timestamp": "2025-07-19 05:25:00"
+  },
+  {
+    "module": "Sản phẩm",
+    "action": "Cập nhật tồn kho",
+    "description": "SP1001: tồn kho +30",
+    "username": "user1",
+    "timestamp": "2025-07-19 05:15:00"
+  },
+  {
+    "module": "Đăng nhập",
+    "action": "[admin] Đăng nhập",
+    "description": "Client IP:127.0.0.1",
+    "username": "admin",
+    "timestamp": "2025-07-19 05:00:00"
+  }
+]
