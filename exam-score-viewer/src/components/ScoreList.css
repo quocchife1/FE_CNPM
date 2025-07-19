@@ -1,13 +1,11 @@
 body {
-  /* background-color: #f7f9fc; */
   background: linear-gradient(to top, #b388f2, #a477ec, #fca5b7);
   min-height: 100vh;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
 }
 
-/* Container chính của bảng điểm */
+/* Container */
 .score-container {
   max-width: 900px;
   margin: 120px auto 80px auto;
@@ -24,7 +22,6 @@ body {
   transform: translateY(-5px);
 }
 
-/* Tiêu đề bảng điểm */
 .score-title {
   font-size: 32px;
   font-weight: bold;
@@ -33,7 +30,6 @@ body {
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-/* Bảng điểm */
 .score-table {
   width: 100%;
   border-collapse: collapse;
@@ -44,9 +40,8 @@ body {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
 }
 
-/* Header của bảng */
 .score-table thead {
-  background-color:#EE82EE;
+  background-color: #ee82ee;
   color: #fff;
 }
 
@@ -57,29 +52,24 @@ body {
   font-size: 16px;
 }
 
-/* Dòng chẵn */
 .score-table tbody tr:nth-child(even) {
   background-color: #f8f8f8;
 }
 
-/* Hover */
 .score-table tbody tr:hover {
   background-color: #e3f0ff;
 }
 
-/* Căn giữa STT và Điểm */
 .score-table td:nth-child(1),
 .score-table td:nth-child(3) {
   text-align: center;
 }
 
-/* Cột thời gian */
 .score-table td:nth-child(4) {
   font-style: italic;
   color: #666;
 }
 
-/* --- Pagination --- */
 .pagination {
   margin-top: 25px;
   text-align: center;

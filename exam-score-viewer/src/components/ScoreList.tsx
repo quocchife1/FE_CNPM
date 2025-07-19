@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchScoreList } from './scoreListSlice';
+import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks';
+import { fetchScores } from '../features/score/scoreSlice';
+import { formatScore } from '../utils/formatScore';
 import './ScoreList.css';
 
 function ScoreList() {
-  const { examId } = useParams();
-  const dispatch = useDispatch();
+  const { examId } = useParams<{ examId: string }>();
+  const dispatch = useAppDispatch();
 
-  const { examName, results, loading, error } = useSelector((state) => state.scoreList);
+  const { examName, results, loading, error } = useAppSelector((state) => state.score);
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
   useEffect(() => {
-    dispatch(fetchScoreList(examId));
+    if (examId) {
+      dispatch(fetchScores(examId));
+    }
   }, [dispatch, examId]);
 
   const totalPages = Math.ceil(results.length / itemsPerPage);
@@ -22,14 +25,6 @@ function ScoreList() {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
 
   if (loading) return <p>Đang tải dữ liệu...</p>;
   if (error) return <p>❌ Lỗi: {error}</p>;
@@ -51,7 +46,7 @@ function ScoreList() {
             <tr key={item.studentId}>
               <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
               <td>{item.studentName}</td>
-              <td>{item.score}</td>
+              <td>{formatScore(item.score)}</td>
               <td>{new Date(item.submittedAt).toLocaleString('vi-VN')}</td>
             </tr>
           ))}
@@ -60,7 +55,7 @@ function ScoreList() {
 
       {totalPages > 1 && (
         <div className="pagination">
-          <button onClick={handlePrevPage} disabled={currentPage === 1}>
+          <button onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))} disabled={currentPage === 1}>
             ← Trang trước
           </button>
 
@@ -74,7 +69,7 @@ function ScoreList() {
             </button>
           ))}
 
-          <button onClick={handleNextPage} disabled={currentPage === totalPages}>
+          <button onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}>
             Trang sau →
           </button>
         </div>

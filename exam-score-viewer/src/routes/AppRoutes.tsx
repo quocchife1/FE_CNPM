@@ -1,17 +1,15 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import ScoreList from './features/scoreList/ScoreList';
+import ScorePage from '../pages/ScorePage';
 
-
-
-function App() {
+const AppRoutes: React.FC = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/score/:examId" element={<ScoreList />} />
+        <Route path="/:examId" element={<ScorePage />} />
       </Routes>
     </Router>
   );
-}
+};
 
-export default App;
+export default AppRoutes;
