@@ -1,5 +1,5 @@
 .audit-page {
-  padding: 60px 80px;
+  padding: 20px 80px;
   margin: 0;
   font-family: "Segoe UI", sans-serif;
   background: linear-gradient(to bottom, #f3e7e9, #e3eeff);
@@ -107,40 +107,4 @@
 .loading {
   font-size: 16px;
   font-style: italic;
-}
-
-.scroll-top-btn {
-  position: fixed;
-  bottom: 40px;
-  right: 15px;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background-color: #2c3e50;
-  color: white;
-  font-size: 24px;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  z-index: 1000;
-  transition: background-color 0.3s;
-}
-
-.scroll-top-btn:hover {
-  background-color: #1abc9c;
-}
-
-.delete-btn {
-  padding: 4px 8px;
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: background-color 0.2s;
-}
-
-.delete-btn:hover {
-  background-color: #c0392b;
 }

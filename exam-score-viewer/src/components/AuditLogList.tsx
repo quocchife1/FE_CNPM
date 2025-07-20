@@ -17,10 +17,13 @@ const AuditLogList: React.FC = () => {
   const [userFilter, setUserFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
-  // Gọi API mặc định khi load lần đầu
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(10);
+  const [sort] = useState('id,desc');
+
   useEffect(() => {
-    dispatch(fetchAuditLogsThunk({ page: 0, size: 10, sort: 'id,desc' }));
-  }, [dispatch]);
+    dispatch(fetchAuditLogsThunk({ page, size, sort }));
+  }, [dispatch, page, size, sort]);
 
   const filteredLogs = logs.filter((log) => {
     const matchesKeyword =
@@ -41,6 +44,17 @@ const AuditLogList: React.FC = () => {
     setKeyword('');
     setUserFilter('');
     setStatusFilter('');
+  };
+
+  const handleSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    if (value === 'all') {
+      setSize(1000);
+      setPage(0);
+    } else {
+      setSize(parseInt(value));
+      setPage(0);
+    }
   };
 
   return (
@@ -69,15 +83,25 @@ const AuditLogList: React.FC = () => {
           onChange={(e) => setStatusFilter(e.target.value)}
         />
 
+        <select value={size >= 1000 ? 'all' : size} onChange={handleSizeChange}>
+          <option value="10">10 / trang</option>
+          <option value="50">50 / trang</option>
+          <option value="100">100 / trang</option>
+          <option value="all">Tất cả</option>
+        </select>
+
         <button
-          onClick={() =>
-            dispatch(fetchAuditLogsThunk({ page: 0, size: 10, sort: 'id,desc' }))
-          }
+          onClick={() => {
+            setPage(0);
+            dispatch(fetchAuditLogsThunk({ page: 0, size, sort }));
+          }}
         >
           Lọc dữ liệu
         </button>
 
-        <button className="clear" onClick={handleClear}>Xóa trắng</button>
+        <button className="clear" onClick={handleClear}>
+          Xóa trắng
+        </button>
       </div>
 
       {loading ? (
@@ -120,6 +144,20 @@ const AuditLogList: React.FC = () => {
               )}
             </tbody>
           </table>
+
+          {/* Phân trang */}
+          <div className="pagination">
+            <button onClick={() => setPage((p) => Math.max(p - 1, 0))} disabled={page === 0}>
+              Trang trước
+            </button>
+            <span> {page + 1}</span>
+            <button
+              onClick={() => setPage((p) => p + 1)}
+              disabled={logs.length < size}
+            >
+              Trang sau
+            </button>
+          </div>
         </div>
       )}
     </div>
