@@ -1,3 +1,4 @@
+//ScoreList.tsx
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks';
