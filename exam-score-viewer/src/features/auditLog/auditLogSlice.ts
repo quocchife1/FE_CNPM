@@ -3,12 +3,14 @@ import { fetchAuditLogsThunk } from './auditLogThunks';
 
 interface AuditLogState {
   logs: any[];
+  meta: any;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: AuditLogState = {
   logs: [],
+  meta: null,
   loading: false,
   error: null,
 };
@@ -25,7 +27,8 @@ const auditLogSlice = createSlice({
       })
       .addCase(fetchAuditLogsThunk.fulfilled, (state, action) => {
         state.loading = false;
-        state.logs = action.payload;
+        state.logs = action.payload.data;
+        state.meta = action.payload.meta;
       })
       .addCase(fetchAuditLogsThunk.rejected, (state, action) => {
         state.loading = false;
