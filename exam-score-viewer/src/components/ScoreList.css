@@ -4,20 +4,21 @@
   flex-direction: column;
   min-height: 100vh;
   box-sizing: border-box;
-  padding: 40px 50px;
-  background: linear-gradient(to bottom, #cc5de8, #5c7cfa);
+  padding: 0px 40px 50px;
+  background: linear-gradient(to bottom, #e3f2fd, #bbdefb);
+  transition: transform 0.3s ease;
 }
 
 .score-container:hover {
-  transform: translateY(-5px);
+  transform: translateY(-3px);
 }
 
 .score-title {
   font-size: 32px;
   font-weight: bold;
-  color: white;
+  color: #0d47a1;
   margin-bottom: 30px;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
@@ -28,11 +29,11 @@
   overflow: hidden;
   background-color: #ffffff;
   color: #333;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .score-table thead {
-  background-color: #ee82ee;
+  background-color: #1976d2;
   color: #fff;
 }
 
@@ -44,14 +45,15 @@
 }
 
 .score-table tbody tr:nth-child(even) {
-  background-color: #f8f8f8;
+  background-color: #f1f8ff;
 }
 
 .score-table tbody tr:hover {
-  background-color: #e3f0ff;
+  background-color: #e3f2fd;
 }
 
 .score-table td:nth-child(1),
+.score-table td:nth-child(2),
 .score-table td:nth-child(3) {
   text-align: center;
 }
@@ -63,35 +65,52 @@
   vertical-align: middle;
 }
 
+/* Pagination */
 .pagination {
   margin-top: 25px;
   text-align: center;
 }
 
 .pagination button {
-  background-color: #fff;
-  color: #5c7cfa;
-  border: 1px solid #5c7cfa;
+  background-color: #ffffff;
+  color: #1976d2;
+  border: 1px solid #1976d2;
   margin: 0 5px;
   padding: 8px 14px;
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
 }
 
 .pagination button:hover {
-  background-color: #5c7cfa;
-  color: #fff;
+  background-color: #1976d2;
+  color: #ffffff;
 }
 
 .pagination button.active {
-  background-color: #5c7cfa;
-  color: #fff;
+  background-color: #1976d2;
+  color: #ffffff;
   border: none;
 }
 
 .pagination button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.toggle-button {
+  background-color: #1565c0;
+  color: #ffffff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-button:hover {
+  background-color: #0d47a1;
 }

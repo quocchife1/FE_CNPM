@@ -1,9 +1,9 @@
 .audit-page {
-  padding: 20px 80px;
+  padding: 0px 20px 80px;
   margin: 0;
   font-family: "Segoe UI", sans-serif;
-  background: linear-gradient(to bottom, #f3e7e9, #e3eeff);
-  color: #333;
+  background-color: #ffffff;
+  color: #ffffff;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -12,36 +12,38 @@
 .audit-title {
   font-size: 30px;
   margin-bottom: 30px;
+  color: #2196f3;
 }
 
 .audit-table {
   width: 100%;
   border-collapse: collapse;
-  background-color: white;
+  background-color: #ffffff;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  color: #0d1117;
 }
 
 .audit-table th,
 .audit-table td {
   padding: 14px 20px;
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .audit-table th {
-  background-color: #f0f4ff;
-  color: #222;
+  background-color: #2196f3;
+  color: #ffffff;
   font-weight: bold;
   text-align: center;
 }
 
 .audit-table td {
-    text-align: left;
+  text-align: left;
 }
 
 .audit-table tr:hover {
-  background-color: #f9fbff;
+  background-color: #e3f2fd;
 }
 
 .filters {
@@ -55,8 +57,10 @@
 .filters select {
   padding: 8px 12px;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  border: 1px solid #2196f3;
   font-size: 14px;
+  background-color: #ffffff;
+  color: #0d1117;
 }
 
 .filters button {
@@ -65,20 +69,20 @@
   border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
+  color: white;
+  transition: background-color 0.3s;
 }
 
 .filters button:hover {
-  opacity: 0.9;
+  opacity: 0.95;
 }
 
 .filters .clear {
-  background-color: #f44336;
-  color: white;
+  background-color: #e53935;
 }
 
 .filters button:not(.clear) {
-  background-color: #5b67f3;
-  color: white;
+  background-color: #2196f3;
 }
 
 .pagination {
@@ -90,21 +94,28 @@
 }
 
 .pagination button {
-  background-color: #5c6bc0;
+  background-color: #2196f3;
   color: white;
   border: none;
   padding: 8px 16px;
   font-size: 14px;
   border-radius: 8px;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .pagination button:disabled {
-  background-color: #ccc;
+  background-color: #cccccc;
   cursor: not-allowed;
+}
+
+.pagination span {
+  font-size: 16px;
+  color: #2196f3;
 }
 
 .loading {
   font-size: 16px;
   font-style: italic;
+  color: #90caf9;
 }

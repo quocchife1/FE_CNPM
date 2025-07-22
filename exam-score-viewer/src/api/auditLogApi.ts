@@ -13,7 +13,7 @@ export const fetchAuditLogs = async ({ page, size, sort }: FetchAuditLogsParams)
   });
 
   return {
-    data: response.data.result,  // ✅ lấy từ `response.data.result`
-    meta: response.data.meta,    // ✅ lấy từ `response.data.meta`
+    data: response.data.result,
+    meta: response.data.meta,
   };
 };

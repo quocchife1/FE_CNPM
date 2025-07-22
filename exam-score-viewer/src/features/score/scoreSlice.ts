@@ -1,3 +1,4 @@
+// scoreSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { fetchScoresByExamId } from '../../api/scoreApi';
 
@@ -22,7 +23,6 @@ const initialState: ScoreState = {
   error: null,
 };
 
-// 🎯 Async thunk gọi API từ scoreApi.ts
 export const fetchScores = createAsyncThunk(
   'score/fetchScores',
   async (examId: string, thunkAPI) => {

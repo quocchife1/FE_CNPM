@@ -59,7 +59,7 @@ const AuditLogList: React.FC = () => {
 
   return (
     <div className="audit-page">
-      <h2 className="audit-title">📜 Nhật ký hệ thống</h2>
+      <h2 className="audit-title">Nhật ký hệ thống</h2>
 
       <div className="filters">
         <input

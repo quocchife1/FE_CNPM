@@ -1,3 +1,4 @@
+// scoreThunks.ts
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchScoresByExamId } from '../../api/scoreApi';
 
