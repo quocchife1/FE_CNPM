@@ -4,7 +4,8 @@ import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks';
 import { fetchUserProfile, saveUserProfile } from '../features/user/profileSlice';
 import { selectProfile, selectProfileLoading } from '../features/user/profileSelectors';
 import { useParams } from 'react-router-dom';
-import Notification from '../components/Notification'; // Import Notification component
+import Notification from '../components/Notification';
+import { selectProfileError } from '../features/user/profileSelectors';
 
 const PencilIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
@@ -23,6 +24,7 @@ const EditProfile: React.FC = () => {
   const dispatch = useAppDispatch();
   const profile = useAppSelector(selectProfile);
   const loading = useAppSelector(selectProfileLoading);
+  const error = useAppSelector(selectProfileError);
   const { userId } = useParams<{ userId: string }>();
 
   const [editMode, setEditMode] = useState(false);
@@ -54,6 +56,16 @@ const EditProfile: React.FC = () => {
       });
     }
   }, [profile]);
+if (error && !loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Bạn không có quyền truy cập</h2>
+          <p className="text-gray-600">Vui lòng kiểm tra lại hoặc liên hệ quản trị viên.</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleSave = async () => {
     if (!userId) return;
