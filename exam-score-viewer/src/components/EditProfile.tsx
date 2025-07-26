@@ -4,16 +4,19 @@ import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks';
 import { fetchUserProfile, saveUserProfile } from '../features/user/profileSlice';
 import { selectProfile, selectProfileLoading } from '../features/user/profileSelectors';
 import { useParams } from 'react-router-dom';
+import Notification from '../components/Notification'; // Import Notification component
 
-// Icon components
 const PencilIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
 );
 const SaveIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
 );
 const CameraIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+);
+const CancelIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
 );
 
 const EditProfile: React.FC = () => {
@@ -30,6 +33,9 @@ const EditProfile: React.FC = () => {
     avatar: null as File | null,
   });
 
+  // State để quản lý thông báo
+  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -44,13 +50,14 @@ const EditProfile: React.FC = () => {
         name: profile.name || '',
         phone: profile.phone || '',
         address: profile.address || '',
-        avatar: null,
+        avatar: null, // Reset avatar to null when profile loads/updates
       });
     }
   }, [profile]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!userId) return;
+
     const formData = new FormData();
     formData.append('name', formState.name);
     formData.append('phone', formState.phone);
@@ -58,24 +65,61 @@ const EditProfile: React.FC = () => {
     if (formState.avatar) {
       formData.append('avatar', formState.avatar);
     }
-    dispatch(saveUserProfile({ userId: Number(userId), formData })).then(() => setEditMode(false));
+
+    try {
+      const resultAction = await dispatch(saveUserProfile({ userId: Number(userId), formData }));
+      if (saveUserProfile.fulfilled.match(resultAction)) {
+        setNotification({ message: 'Cập nhật hồ sơ thành công!', type: 'success' });
+        setEditMode(false);
+      } else {
+        // Xử lý lỗi từ reducer hoặc action thunk
+        // Kiểm tra resultAction.payload hoặc resultAction.error để lấy thông tin lỗi cụ thể hơn
+        setNotification({ message: 'Cập nhật hồ sơ thất bại. Vui lòng thử lại!', type: 'error' });
+      }
+    } catch (error) {
+      console.error("Error saving profile:", error);
+      setNotification({ message: 'Đã xảy ra lỗi khi lưu hồ sơ. Vui lòng thử lại!', type: 'error' });
+    }
+  };
+
+  const handleCancel = () => {
+    if (profile) {
+      setFormState({
+        name: profile.name || '',
+        phone: profile.phone || '',
+        address: profile.address || '',
+        avatar: null,
+      });
+    }
+    setEditMode(false);
+    setNotification(null);
   };
 
   const handleAvatarClick = () => {
-    fileInputRef.current?.click();
+    if (editMode) {
+      fileInputRef.current?.click();
+    }
   };
 
   return (
-    <div className="bg-slate-100 min-h-screen py-12 px-4">
-      <div className="w-full max-w-5xl mx-auto p-8 bg-white rounded-2xl shadow-md border border-blue-200">
-        <h2 className="text-3xl font-bold text-slate-800 tracking-tight mb-2">Hồ sơ cá nhân</h2>
-        <p className="text-slate-500 mb-8">Xem và chỉnh sửa thông tin cá nhân của bạn.</p>
+    <div className="bg-slate-100 min-h-screen flex items-center justify-center py-4 px-4">
+      <div className="w-full max-w-4xl mx-auto p-6 bg-white rounded-3xl shadow-xl border border-blue-200 lg:max-w-5xl xl:max-w-6xl">
+        <h2 className="text-3xl font-extrabold text-blue-900 tracking-tight mb-2 text-center py-5 lg:text-4xl">Hồ sơ cá nhân</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="flex flex-col items-center">
+        {notification && (
+          <Notification
+            message={notification.message}
+            type={notification.type}
+            onClose={() => setNotification(null)} // Khi Notification yêu cầu đóng, xóa nó khỏi state
+            duration={3000} // Tùy chọn: thời gian hiển thị (mili giây)
+          />
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6 lg:gap-x-12 lg:gap-y-8 items-start">
+          <div className="flex flex-col items-center pt-4 md:pt-0">
             <div
-              className="relative w-48 h-48 border-4 border-blue-100 rounded-full shadow-sm bg-white cursor-pointer overflow-hidden"
-              onClick={editMode ? handleAvatarClick : undefined}
+              className="relative w-40 h-40 md:w-48 md:h-48 border-4 border-blue-100 rounded-full shadow-lg bg-white cursor-pointer overflow-hidden group"
+              onClick={handleAvatarClick}
             >
               <img
                 src={
@@ -87,7 +131,7 @@ const EditProfile: React.FC = () => {
                 className="w-full h-full object-cover"
               />
               {editMode && (
-                <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center text-white text-sm font-semibold">
+                <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center text-white text-lg font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <CameraIcon />
                 </div>
               )}
@@ -104,80 +148,79 @@ const EditProfile: React.FC = () => {
               />
             </div>
 
-            <div className="mt-4 text-sm text-slate-600">
-              <span className="font-medium">ID:</span>{' '}
-              <span className="font-mono bg-slate-100 text-blue-800 px-2 py-1 rounded">{userId}</span>
+            <div className="mt-6 text-base text-slate-700 font-medium">
+              <span className="text-blue-800 font-semibold">ID:</span>{' '}
+              <span className="font-mono bg-blue-50 text-blue-800 px-3 py-1 rounded-md text-sm ml-1">
+                {userId}
+              </span>
             </div>
           </div>
 
-          <div className="md:col-span-2 space-y-4">
+          <div className="md:col-span-2 space-y-5 lg:space-y-6">
             {loading ? (
-              <p className="text-center text-slate-500">Đang tải dữ liệu...</p>
+              <p className="text-center text-slate-500 text-lg">Đang tải dữ liệu...</p>
             ) : (
               <>
-                <div>
-                  <label className="block text-sm font-medium text-blue-800">Tên</label>
+                <div className="flex flex-col">
+                  <label htmlFor="name" className="text-base font-semibold text-blue-800 mb-1">Họ tên</label>
                   <input
+                    id="name"
                     type="text"
-                    className="w-full border border-slate-300 rounded px-3 py-2"
+                    className={`w-full border ${editMode ? 'border-blue-400 focus:ring-2 focus:ring-blue-300' : 'border-slate-300 bg-slate-50 text-slate-700'} rounded-lg px-3 py-2 text-base transition-all duration-200`}
                     value={formState.name}
                     onChange={(e) => setFormState((prev) => ({ ...prev, name: e.target.value }))}
                     disabled={!editMode}
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-blue-800">Số điện thoại</label>
+                <div className="flex flex-col">
+                  <label htmlFor="phone" className="text-base font-semibold text-blue-800 mb-1">Số điện thoại</label>
                   <input
+                    id="phone"
                     type="text"
-                    className="w-full border border-slate-300 rounded px-3 py-2"
+                    className={`w-full border ${editMode ? 'border-blue-400 focus:ring-2 focus:ring-blue-300' : 'border-slate-300 bg-slate-50 text-slate-700'} rounded-lg px-3 py-2 text-base transition-all duration-200`}
                     value={formState.phone}
                     onChange={(e) => setFormState((prev) => ({ ...prev, phone: e.target.value }))}
                     disabled={!editMode}
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-blue-800">Địa chỉ</label>
+                <div className="flex flex-col">
+                  <label htmlFor="address" className="text-base font-semibold text-blue-800 mb-1">Địa chỉ</label>
                   <input
+                    id="address"
                     type="text"
-                    className="w-full border border-slate-300 rounded px-3 py-2"
+                    className={`w-full border ${editMode ? 'border-blue-400 focus:ring-2 focus:ring-blue-300' : 'border-slate-300 bg-slate-50 text-slate-700'} rounded-lg px-3 py-2 text-base transition-all duration-200`}
                     value={formState.address}
                     onChange={(e) => setFormState((prev) => ({ ...prev, address: e.target.value }))}
                     disabled={!editMode}
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-blue-800">Email</label>
-                  <input
-                    type="text"
-                    className="w-full bg-slate-100 border border-slate-300 rounded px-3 py-2 text-slate-500"
-                    value={profile?.email || ''}
-                    disabled
-                  />
+                <div className="flex flex-col">
+                  <label className="text-base font-semibold text-blue-800 mb-1">Email</label>
+                  <p className="w-full bg-blue-50 text-blue-700 rounded-lg px-3 py-2 text-base font-medium border border-blue-200">
+                    {profile?.email || 'N/A'}
+                  </p>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-blue-800">Ngày tạo</label>
-                  <input
-                    type="text"
-                    className="w-full bg-slate-100 border border-slate-300 rounded px-3 py-2 text-slate-500"
-                    value={profile?.createdAt ? new Date(profile.createdAt).toLocaleDateString() : ''}
-                    disabled
-                  />
+                <div className="flex flex-col">
+                  <label className="text-base font-semibold text-blue-800 mb-1">Ngày tạo</label>
+                  <p className="w-full bg-blue-50 text-blue-700 rounded-lg px-3 py-2 text-base font-medium border border-blue-200">
+                    {profile?.createdAt ? new Date(profile.createdAt).toLocaleDateString('vi-VN') : 'N/A'}
+                  </p>
                 </div>
               </>
             )}
 
-            <div className="flex justify-end gap-4 pt-4">
+            <div className="flex justify-end gap-3 mt-4 lg:mt-6">
               {editMode ? (
                 <>
                   <button
-                    onClick={() => setEditMode(false)}
-                    className="px-4 py-2 rounded bg-slate-300 text-slate-800 hover:bg-slate-400 flex items-center gap-2"
+                    onClick={handleCancel}
+                    className="px-5 py-2 rounded-lg bg-slate-300 text-slate-800 hover:bg-slate-400 text-base font-medium flex items-center gap-1 transition-colors duration-200"
                   >
-                    Hủy
+                    <CancelIcon /> Hủy
                   </button>
                   <button
                     onClick={handleSave}
-                    className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-2"
+                    className="px-5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 text-base font-medium flex items-center gap-1 transition-colors duration-200"
                   >
                     <SaveIcon /> Lưu
                   </button>
@@ -185,7 +228,7 @@ const EditProfile: React.FC = () => {
               ) : (
                 <button
                   onClick={() => setEditMode(true)}
-                  className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-2"
+                  className="px-5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 text-base font-medium flex items-center gap-1 transition-colors duration-200"
                 >
                   <PencilIcon /> Chỉnh sửa
                 </button>
