@@ -1,62 +1,44 @@
-// profileSlice.ts
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { fetchProfileById, updateProfileById } from '../../api/profileApi';
-
-export interface Profile {
-  id: number;
-  name: string;
-  phone: string;
-  email: string;
-  avatarUrl: string;
-  address: string;
-  createdAt: string;
-}
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import {
+  fetchProfileById,
+  updateProfileById,
+} from '../../api/profileApi';
 
 interface ProfileState {
-  profile: Profile | null;
+  data: {
+    id: number;
+    name: string;
+    phone: string;
+    address: string;
+    avatarUrl: string;
+    email: string; 
+    createdAt: string;
+  } | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: ProfileState = {
-  profile: null,
+  data: null,
   loading: false,
   error: null,
 };
 
-const getUserId = () => {
-  const id = localStorage.getItem('userId');
-  return id ? Number(id) : null;
-};
-
+// Fetch profile by userId (from URL)
 export const fetchUserProfile = createAsyncThunk(
   'profile/fetchUserProfile',
-  async (_, thunkAPI) => {
-    const userId = getUserId();
-    if (!userId) return thunkAPI.rejectWithValue('Chưa có userId');
-    try {
-      const data = await fetchProfileById(userId);
-      return data;
-    } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.message);
-    }
+  async (userId: number) => {
+    const response = await fetchProfileById(userId);
+    return response;
   }
 );
 
+// Save profile with FormData
 export const saveUserProfile = createAsyncThunk(
   'profile/saveUserProfile',
-  async (
-    formData: FormData,
-    thunkAPI
-  ) => {
-    const userId = getUserId();
-    if (!userId) return thunkAPI.rejectWithValue('Chưa có userId');
-    try {
-      const updated = await updateProfileById(userId, formData);
-      return updated;
-    } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.message);
-    }
+  async ({ userId, formData }: { userId: number; formData: FormData }) => {
+    const response = await updateProfileById(userId, formData);
+    return response;
   }
 );
 
@@ -66,29 +48,32 @@ const profileSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      // Fetch
       .addCase(fetchUserProfile.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchUserProfile.fulfilled, (state, action: PayloadAction<Profile>) => {
+      .addCase(fetchUserProfile.fulfilled, (state, action) => {
         state.loading = false;
-        state.profile = action.payload;
+        state.data = action.payload;
       })
       .addCase(fetchUserProfile.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
-        state.profile = null;
+        state.error = action.error.message || 'Lỗi tải hồ sơ';
       })
+
+      // Save
       .addCase(saveUserProfile.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
-      .addCase(saveUserProfile.fulfilled, (state, action: PayloadAction<Profile>) => {
+      .addCase(saveUserProfile.fulfilled, (state, action) => {
         state.loading = false;
-        state.profile = action.payload;
+        state.data = action.payload;
       })
       .addCase(saveUserProfile.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.error.message || 'Lỗi lưu hồ sơ';
       });
   },
 });

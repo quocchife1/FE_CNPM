@@ -1,3 +1,4 @@
+//store.ts
 import { configureStore } from '@reduxjs/toolkit';
 import scoreReducer from '../features/score/scoreSlice';
 import { auditLogReducer } from '../features/auditLog';

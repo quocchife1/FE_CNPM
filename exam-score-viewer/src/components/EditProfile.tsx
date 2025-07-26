@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks';
 import { fetchUserProfile, saveUserProfile } from '../features/user/profileSlice';
 import { selectProfile, selectProfileLoading } from '../features/user/profileSelectors';
+import { useParams } from 'react-router-dom';
 
 // Icon components
 const PencilIcon = () => (
@@ -19,10 +20,9 @@ const EditProfile: React.FC = () => {
   const dispatch = useAppDispatch();
   const profile = useAppSelector(selectProfile);
   const loading = useAppSelector(selectProfileLoading);
-  const [editMode, setEditMode] = useState(false);
-  const [userId, setUserId] = useState(() => localStorage.getItem('userId') || '');
-  const [tempUserId, setTempUserId] = useState(userId);
+  const { userId } = useParams<{ userId: string }>();
 
+  const [editMode, setEditMode] = useState(false);
   const [formState, setFormState] = useState({
     name: '',
     phone: '',
@@ -34,8 +34,7 @@ const EditProfile: React.FC = () => {
 
   useEffect(() => {
     if (userId) {
-      localStorage.setItem('userId', userId);
-      dispatch(fetchUserProfile());
+      dispatch(fetchUserProfile(Number(userId)));
     }
   }, [dispatch, userId]);
 
@@ -51,6 +50,7 @@ const EditProfile: React.FC = () => {
   }, [profile]);
 
   const handleSave = () => {
+    if (!userId) return;
     const formData = new FormData();
     formData.append('name', formState.name);
     formData.append('phone', formState.phone);
@@ -58,7 +58,7 @@ const EditProfile: React.FC = () => {
     if (formState.avatar) {
       formData.append('avatar', formState.avatar);
     }
-    dispatch(saveUserProfile(formData)).then(() => setEditMode(false));
+    dispatch(saveUserProfile({ userId: Number(userId), formData })).then(() => setEditMode(false));
   };
 
   const handleAvatarClick = () => {
@@ -67,28 +67,6 @@ const EditProfile: React.FC = () => {
 
   return (
     <div className="bg-slate-100 min-h-screen py-12 px-4">
-      {/* ⚙️ Test userId input */}
-      <div className="w-full max-w-3xl mx-auto mb-6 p-4 bg-yellow-50 border border-yellow-300 rounded-lg shadow-sm flex flex-col sm:flex-row items-center gap-3">
-        <div className="text-sm font-medium text-yellow-800 whitespace-nowrap">🧪 Test userId:</div>
-        <input
-          type="number"
-          className="border px-3 py-1 rounded w-full max-w-xs text-sm"
-          placeholder="Nhập userId..."
-          value={tempUserId}
-          onChange={(e) => setTempUserId(e.target.value)}
-        />
-        <button
-          className="bg-yellow-600 text-white px-4 py-1 rounded hover:bg-yellow-700 text-sm"
-          onClick={() => {
-            setUserId(tempUserId);
-            localStorage.setItem('userId', tempUserId);
-            dispatch(fetchUserProfile());
-          }}
-        >
-          Áp dụng
-        </button>
-      </div>
-
       <div className="w-full max-w-5xl mx-auto p-8 bg-white rounded-2xl shadow-md border border-blue-200">
         <h2 className="text-3xl font-bold text-slate-800 tracking-tight mb-2">Hồ sơ cá nhân</h2>
         <p className="text-slate-500 mb-8">Xem và chỉnh sửa thông tin cá nhân của bạn.</p>
@@ -96,7 +74,7 @@ const EditProfile: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="flex flex-col items-center">
             <div
-              className="relative w-32 h-32 border-4 border-blue-100 rounded-full shadow-sm bg-white cursor-pointer overflow-hidden"
+              className="relative w-48 h-48 border-4 border-blue-100 rounded-full shadow-sm bg-white cursor-pointer overflow-hidden"
               onClick={editMode ? handleAvatarClick : undefined}
             >
               <img
@@ -126,9 +104,8 @@ const EditProfile: React.FC = () => {
               />
             </div>
 
-            {/* 👤 Mã người dùng ngay dưới ảnh */}
             <div className="mt-4 text-sm text-slate-600">
-              <span className="font-medium">Mã người dùng:</span>{' '}
+              <span className="font-medium">ID:</span>{' '}
               <span className="font-mono bg-slate-100 text-blue-800 px-2 py-1 rounded">{userId}</span>
             </div>
           </div>
@@ -138,7 +115,6 @@ const EditProfile: React.FC = () => {
               <p className="text-center text-slate-500">Đang tải dữ liệu...</p>
             ) : (
               <>
-                {/* Editable fields */}
                 <div>
                   <label className="block text-sm font-medium text-blue-800">Tên</label>
                   <input
@@ -169,8 +145,6 @@ const EditProfile: React.FC = () => {
                     disabled={!editMode}
                   />
                 </div>
-
-                {/* Read-only fields */}
                 <div>
                   <label className="block text-sm font-medium text-blue-800">Email</label>
                   <input
