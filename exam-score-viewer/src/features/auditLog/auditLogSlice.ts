@@ -1,3 +1,4 @@
+// auditLogSlice.ts
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchAuditLogsThunk } from './auditLogThunks';
 
@@ -33,6 +34,7 @@ const auditLogSlice = createSlice({
       .addCase(fetchAuditLogsThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Error loading logs';
+        console.error("Lỗi tải nhật ký:", action.error);
       });
   },
 });

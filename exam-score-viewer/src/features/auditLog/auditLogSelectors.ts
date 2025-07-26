@@ -1,3 +1,4 @@
+//auditLogSelectors.ts
 import { RootState } from '../../app/store';
 
 export const selectAuditLogs = (state: RootState) => state.auditLog.logs;

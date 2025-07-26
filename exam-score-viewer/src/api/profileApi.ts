@@ -1,6 +1,8 @@
 // profileApi.ts
 import axios from 'axios';
 
+axios.defaults.withCredentials = true;
+
 const API_URL = 'http://localhost:8080/api/v1';
 
 export const fetchProfileById = async (userId: number) => {
@@ -8,10 +10,7 @@ export const fetchProfileById = async (userId: number) => {
   return response.data;
 };
 
-export const updateProfileById = async (
-  userId: number,
-  formData: FormData
-) => {
+export const updateProfileById = async (userId: number, formData: FormData) => {
   const response = await axios.put(`${API_URL}/user/${userId}`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
