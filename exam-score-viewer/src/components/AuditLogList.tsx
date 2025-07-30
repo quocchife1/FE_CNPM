@@ -1,3 +1,5 @@
+// src/components/AuditLogList.tsx
+
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks';
 import {
@@ -5,6 +7,7 @@ import {
   selectAuditLogs,
   selectAuditLoading,
 } from '../features/auditLog';
+import { Link } from 'react-router-dom';
 
 const AuditLogList: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -33,7 +36,9 @@ const AuditLogList: React.FC = () => {
       log.statusCode?.toString().includes(keyword);
 
     const matchesUser = userFilter ? log.username === userFilter : true;
-    const matchesStatus = statusFilter ? log.statusCode?.toString() === statusFilter : true;
+    const matchesStatus = statusFilter
+      ? log.statusCode?.toString() === statusFilter
+      : true;
 
     return matchesKeyword && matchesUser && matchesStatus;
   });
@@ -59,7 +64,7 @@ const AuditLogList: React.FC = () => {
     <div className="min-h-screen bg-white text-gray-900 px-5 py-10">
       <h2 className="text-3xl font-bold text-blue-500 mb-6">Nhật ký hệ thống</h2>
 
-      <div className="flex flex-wrap gap-3 mb-5">
+      <div className="flex flex-wrap gap-3 mb-5 items-center">
         <input
           type="text"
           placeholder="Nhập từ khóa"
@@ -67,7 +72,6 @@ const AuditLogList: React.FC = () => {
           onChange={(e) => setKeyword(e.target.value)}
           className="px-3 py-2 border border-blue-500 rounded-md text-sm"
         />
-
         <input
           type="text"
           placeholder="Lọc theo người dùng"
@@ -75,7 +79,6 @@ const AuditLogList: React.FC = () => {
           onChange={(e) => setUserFilter(e.target.value)}
           className="px-3 py-2 border border-blue-500 rounded-md text-sm"
         />
-
         <input
           type="text"
           placeholder="Lọc theo status code"
@@ -83,7 +86,6 @@ const AuditLogList: React.FC = () => {
           onChange={(e) => setStatusFilter(e.target.value)}
           className="px-3 py-2 border border-blue-500 rounded-md text-sm"
         />
-
         <select
           value={size >= 1000 ? 'all' : size}
           onChange={handleSizeChange}
@@ -94,7 +96,6 @@ const AuditLogList: React.FC = () => {
           <option value="100">100 / trang</option>
           <option value="all">Tất cả</option>
         </select>
-
         <button
           onClick={() => {
             setPage(0);
@@ -104,13 +105,18 @@ const AuditLogList: React.FC = () => {
         >
           Lọc dữ liệu
         </button>
-
         <button
           onClick={handleClear}
           className="bg-red-500 text-white font-semibold px-4 py-2 rounded-md hover:opacity-90"
         >
           Xóa trắng
         </button>
+
+        <Link to="/stats">
+          <button className="bg-green-500 text-white font-semibold px-4 py-2 rounded-md hover:opacity-90">
+            Xem thống kê
+          </button>
+        </Link>
       </div>
 
       {loading ? (
@@ -167,7 +173,9 @@ const AuditLogList: React.FC = () => {
             >
               Trang trước
             </button>
-            <span className="text-blue-500 font-semibold text-lg">{page + 1}</span>
+            <span className="text-blue-500 font-semibold text-lg">
+              {page + 1}
+            </span>
             <button
               onClick={() => setPage((p) => p + 1)}
               disabled={logs.length < size}

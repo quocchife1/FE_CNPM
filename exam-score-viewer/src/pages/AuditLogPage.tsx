@@ -1,3 +1,4 @@
+//AuditLogPage.tsx
 import React from 'react';
 import AuditLogList from '../components/AuditLogList';
 

@@ -1,9 +1,11 @@
-// auditLogSlice.ts
+// src/features/auditLog/auditLogSlice.ts
+
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchAuditLogsThunk } from './auditLogThunks';
+import { fetchAuditLogsThunk, fetchAllAuditLogsThunk } from './auditLogThunks';
 
 interface AuditLogState {
   logs: any[];
+  allLogs: any[];
   meta: any;
   loading: boolean;
   error: string | null;
@@ -11,6 +13,7 @@ interface AuditLogState {
 
 const initialState: AuditLogState = {
   logs: [],
+  allLogs: [],
   meta: null,
   loading: false,
   error: null,
@@ -34,7 +37,20 @@ const auditLogSlice = createSlice({
       .addCase(fetchAuditLogsThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Error loading logs';
-        console.error("Lỗi tải nhật ký:", action.error);
+      })
+
+      .addCase(fetchAllAuditLogsThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllAuditLogsThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.allLogs = action.payload;
+      })
+      .addCase(fetchAllAuditLogsThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Error loading all logs';
+        console.error("Lỗi tải tất cả nhật ký:", action.error);
       });
   },
 });
