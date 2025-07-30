@@ -6,6 +6,7 @@ import { selectProfile, selectProfileLoading } from '../features/user/profileSel
 import { useParams } from 'react-router-dom';
 import Notification from '../components/Notification';
 import { selectProfileError } from '../features/user/profileSelectors';
+import ImageCropper from '../components/ImageCropper'; // Import component cắt ảnh
 
 const PencilIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
@@ -32,12 +33,16 @@ const EditProfile: React.FC = () => {
     name: '',
     phone: '',
     address: '',
-    avatar: null as File | null,
+    avatar: null as File | null, // Avatar đã cắt xong, sẵn sàng để upload
+    avatarPreviewUrl: '', // URL để hiển thị ảnh preview (từ ảnh gốc hoặc ảnh đã cắt)
   });
 
   // State để quản lý thông báo
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
+  // State và ref cho việc cắt ảnh
+  const [showCropper, setShowCropper] = useState(false);
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null); // URL của ảnh gốc để truyền vào cropper
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -52,11 +57,13 @@ const EditProfile: React.FC = () => {
         name: profile.name || '',
         phone: profile.phone || '',
         address: profile.address || '',
-        avatar: null, // Reset avatar to null when profile loads/updates
+        avatar: null,
+        avatarPreviewUrl: profile.avatarUrl || '/default-avatar.png', // Sử dụng avatar hiện có hoặc default
       });
     }
   }, [profile]);
-if (error && !loading) {
+
+  if (error && !loading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
@@ -67,6 +74,52 @@ if (error && !loading) {
     );
   }
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+
+      // Reset giá trị của input file để cho phép chọn lại cùng một file
+      // Đây là key để giải quyết vấn đề bạn gặp phải
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+
+      if (file.type === 'image/gif') {
+        // Nếu là GIF, không cắt, dùng trực tiếp file và cập nhật preview
+        setFormState((prev) => ({
+          ...prev,
+          avatar: file,
+          avatarPreviewUrl: URL.createObjectURL(file),
+        }));
+        setNotification({ message: 'Ảnh GIF sẽ được tải lên nguyên bản, không cắt.', type: 'success' });
+      } else {
+        // Nếu không phải GIF, tiến hành cắt ảnh
+        const reader = new FileReader();
+        reader.onload = () => {
+          setImageToCrop(reader.result as string); // Đặt ảnh gốc vào state để truyền vào cropper
+          setShowCropper(true); // Hiển thị cropper
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  };
+
+  const handleCropComplete = (croppedImageBlob: Blob | null) => {
+    if (croppedImageBlob) {
+      // Chuyển Blob thành File để gửi lên server
+      const croppedImageFile = new File([croppedImageBlob], `avatar-${Date.now()}.jpeg`, {
+        type: 'image/jpeg',
+      });
+      setFormState((prev) => ({
+        ...prev,
+        avatar: croppedImageFile, // Lưu File đã cắt
+        avatarPreviewUrl: URL.createObjectURL(croppedImageBlob), // Lưu URL để hiển thị preview
+      }));
+    }
+    setImageToCrop(null); // Xóa ảnh gốc khỏi state
+    setShowCropper(false); // Ẩn cropper
+  };
+
   const handleSave = async () => {
     if (!userId) return;
 
@@ -75,7 +128,7 @@ if (error && !loading) {
     formData.append('phone', formState.phone);
     formData.append('address', formState.address);
     if (formState.avatar) {
-      formData.append('avatar', formState.avatar);
+      formData.append('avatar', formState.avatar); // Sử dụng ảnh đã cắt (hoặc ảnh GIF gốc)
     }
 
     try {
@@ -83,6 +136,9 @@ if (error && !loading) {
       if (saveUserProfile.fulfilled.match(resultAction)) {
         setNotification({ message: 'Cập nhật hồ sơ thành công!', type: 'success' });
         setEditMode(false);
+        // Sau khi lưu thành công, cập nhật avatarPreviewUrl để hiển thị ảnh mới nhất từ server
+        // (Nếu API trả về URL ảnh mới, bạn có thể cập nhật profile.avatarUrl.
+        // Hiện tại nó sẽ giữ nguyên avatarPreviewUrl đã được đặt sau khi cắt hoặc chọn GIF)
       } else {
         // Xử lý lỗi từ reducer hoặc action thunk
         // Kiểm tra resultAction.payload hoặc resultAction.error để lấy thông tin lỗi cụ thể hơn
@@ -101,6 +157,7 @@ if (error && !loading) {
         phone: profile.phone || '',
         address: profile.address || '',
         avatar: null,
+        avatarPreviewUrl: profile.avatarUrl || '/default-avatar.png', // Đặt lại ảnh preview về ảnh gốc
       });
     }
     setEditMode(false);
@@ -122,8 +179,8 @@ if (error && !loading) {
           <Notification
             message={notification.message}
             type={notification.type}
-            onClose={() => setNotification(null)} // Khi Notification yêu cầu đóng, xóa nó khỏi state
-            duration={3000} // Tùy chọn: thời gian hiển thị (mili giây)
+            onClose={() => setNotification(null)}
+            duration={3000}
           />
         )}
 
@@ -134,11 +191,7 @@ if (error && !loading) {
               onClick={handleAvatarClick}
             >
               <img
-                src={
-                  formState.avatar
-                    ? URL.createObjectURL(formState.avatar)
-                    : profile?.avatarUrl || '/default-avatar.png'
-                }
+                src={formState.avatarPreviewUrl} // Hiển thị ảnh preview đã cắt hoặc ảnh gốc
                 alt="Avatar"
                 className="w-full h-full object-cover"
               />
@@ -149,14 +202,10 @@ if (error && !loading) {
               )}
               <input
                 type="file"
-                accept="image/*"
+                accept="image/*" // Chấp nhận tất cả các loại ảnh
                 className="hidden"
                 ref={fileInputRef}
-                onChange={(e) => {
-                  if (e.target.files?.[0]) {
-                    setFormState((prev) => ({ ...prev, avatar: e.target.files![0] }));
-                  }
-                }}
+                onChange={handleFileChange} // Gọi hàm xử lý file mới
               />
             </div>
 
@@ -249,6 +298,13 @@ if (error && !loading) {
           </div>
         </div>
       </div>
+      {showCropper && imageToCrop && (
+        <ImageCropper
+          imageSrc={imageToCrop}
+          onCropComplete={handleCropComplete}
+          onClose={() => setShowCropper(false)}
+        />
+      )}
     </div>
   );
 };
