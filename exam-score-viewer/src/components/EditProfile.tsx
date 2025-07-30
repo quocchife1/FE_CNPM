@@ -21,6 +21,26 @@ const CancelIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
 );
 
+const ImageModal: React.FC<{ imageUrl: string; onClose: () => void }> = ({ imageUrl, onClose }) => {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
+      onClick={onClose}
+    >
+      <div className="relative max-w-3xl max-h-full" onClick={(e) => e.stopPropagation()}>
+        <img src={imageUrl} alt="Preview" className="max-w-full max-h-[80vh] object-contain" />
+        <button
+          onClick={onClose}
+          className="absolute top-[-15px] right-[-15px] text-white text-3xl font-bold bg-gray-800 rounded-full w-10 h-10 flex items-center justify-center hover:bg-gray-700 transition-colors"
+          aria-label="Close"
+        >
+          &times;
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const EditProfile: React.FC = () => {
   const dispatch = useAppDispatch();
   const profile = useAppSelector(selectProfile);
@@ -33,17 +53,20 @@ const EditProfile: React.FC = () => {
     name: '',
     phone: '',
     address: '',
-    avatar: null as File | null, // Avatar đã cắt xong, sẵn sàng để upload
-    avatarPreviewUrl: '', // URL để hiển thị ảnh preview (từ ảnh gốc hoặc ảnh đã cắt)
+    avatar: null as File | null,
+    avatarPreviewUrl: '',
   });
 
-  // State để quản lý thông báo
+
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
-  // State và ref cho việc cắt ảnh
+  
   const [showCropper, setShowCropper] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string | null>(null); // URL của ảnh gốc để truyền vào cropper
+  // Fix: Khởi tạo useRef với null
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [showImageModal, setShowImageModal] = useState(false);
 
   useEffect(() => {
     if (userId) {
@@ -76,7 +99,7 @@ const EditProfile: React.FC = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
+      const file = e.target.files[0]; // Lấy file đầu tiên từ FileList
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -106,12 +129,12 @@ const EditProfile: React.FC = () => {
       });
       setFormState((prev) => ({
         ...prev,
-        avatar: croppedImageFile, // Lưu File đã cắt
-        avatarPreviewUrl: URL.createObjectURL(croppedImageBlob), // Lưu URL để hiển thị preview
+        avatar: croppedImageFile,
+        avatarPreviewUrl: URL.createObjectURL(croppedImageBlob),
       }));
     }
-    setImageToCrop(null); // Xóa ảnh gốc khỏi state
-    setShowCropper(false); // Ẩn cropper
+    setImageToCrop(null);
+    setShowCropper(false);
   };
 
   const handleSave = async () => {
@@ -157,6 +180,8 @@ const EditProfile: React.FC = () => {
   const handleAvatarClick = () => {
     if (editMode) {
       fileInputRef.current?.click();
+    } else {
+      setShowImageModal(true);
     }
   };
 
@@ -293,6 +318,12 @@ const EditProfile: React.FC = () => {
           imageSrc={imageToCrop}
           onCropComplete={handleCropComplete}
           onClose={() => setShowCropper(false)}
+        />
+      )}
+      {showImageModal && (
+        <ImageModal
+          imageUrl={formState.avatarPreviewUrl}
+          onClose={() => setShowImageModal(false)}
         />
       )}
     </div>
