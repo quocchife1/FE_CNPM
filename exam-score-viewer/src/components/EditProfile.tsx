@@ -77,27 +77,22 @@ const EditProfile: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-
-      // Reset giá trị của input file để cho phép chọn lại cùng một file
-      // Đây là key để giải quyết vấn đề bạn gặp phải
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
 
       if (file.type === 'image/gif') {
-        // Nếu là GIF, không cắt, dùng trực tiếp file và cập nhật preview
         setFormState((prev) => ({
           ...prev,
           avatar: file,
           avatarPreviewUrl: URL.createObjectURL(file),
         }));
-        setNotification({ message: 'Ảnh GIF sẽ được tải lên nguyên bản, không cắt.', type: 'success' });
+        setNotification({ message: 'Cập nhật thành công', type: 'success' });
       } else {
-        // Nếu không phải GIF, tiến hành cắt ảnh
         const reader = new FileReader();
         reader.onload = () => {
-          setImageToCrop(reader.result as string); // Đặt ảnh gốc vào state để truyền vào cropper
-          setShowCropper(true); // Hiển thị cropper
+          setImageToCrop(reader.result as string);
+          setShowCropper(true);
         };
         reader.readAsDataURL(file);
       }
@@ -106,7 +101,6 @@ const EditProfile: React.FC = () => {
 
   const handleCropComplete = (croppedImageBlob: Blob | null) => {
     if (croppedImageBlob) {
-      // Chuyển Blob thành File để gửi lên server
       const croppedImageFile = new File([croppedImageBlob], `avatar-${Date.now()}.jpeg`, {
         type: 'image/jpeg',
       });
@@ -128,7 +122,7 @@ const EditProfile: React.FC = () => {
     formData.append('phone', formState.phone);
     formData.append('address', formState.address);
     if (formState.avatar) {
-      formData.append('avatar', formState.avatar); // Sử dụng ảnh đã cắt (hoặc ảnh GIF gốc)
+      formData.append('avatar', formState.avatar);
     }
 
     try {
@@ -136,12 +130,8 @@ const EditProfile: React.FC = () => {
       if (saveUserProfile.fulfilled.match(resultAction)) {
         setNotification({ message: 'Cập nhật hồ sơ thành công!', type: 'success' });
         setEditMode(false);
-        // Sau khi lưu thành công, cập nhật avatarPreviewUrl để hiển thị ảnh mới nhất từ server
-        // (Nếu API trả về URL ảnh mới, bạn có thể cập nhật profile.avatarUrl.
-        // Hiện tại nó sẽ giữ nguyên avatarPreviewUrl đã được đặt sau khi cắt hoặc chọn GIF)
       } else {
-        // Xử lý lỗi từ reducer hoặc action thunk
-        // Kiểm tra resultAction.payload hoặc resultAction.error để lấy thông tin lỗi cụ thể hơn
+
         setNotification({ message: 'Cập nhật hồ sơ thất bại. Vui lòng thử lại!', type: 'error' });
       }
     } catch (error) {
@@ -191,7 +181,7 @@ const EditProfile: React.FC = () => {
               onClick={handleAvatarClick}
             >
               <img
-                src={formState.avatarPreviewUrl} // Hiển thị ảnh preview đã cắt hoặc ảnh gốc
+                src={formState.avatarPreviewUrl}
                 alt="Avatar"
                 className="w-full h-full object-cover"
               />
@@ -202,10 +192,10 @@ const EditProfile: React.FC = () => {
               )}
               <input
                 type="file"
-                accept="image/*" // Chấp nhận tất cả các loại ảnh
+                accept="image/*"
                 className="hidden"
                 ref={fileInputRef}
-                onChange={handleFileChange} // Gọi hàm xử lý file mới
+                onChange={handleFileChange}
               />
             </div>
 

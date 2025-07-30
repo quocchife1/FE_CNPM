@@ -1,12 +1,12 @@
 // src/components/ImageCropper.tsx
 import React, { useState, useCallback } from 'react';
 import Cropper from 'react-easy-crop';
-import { getCroppedImg } from '../utils/cropImage'; // Chúng ta sẽ tạo file này ở bước tiếp theo
+import { getCroppedImg } from '../utils/cropImage';
 
 interface ImageCropperProps {
-  imageSrc: string; // URL của ảnh gốc để cắt
-  onCropComplete: (croppedImage: Blob | null) => void; // Callback khi cắt xong
-  onClose: () => void; // Callback khi đóng modal
+  imageSrc: string;
+  onCropComplete: (croppedImage: Blob | null) => void;
+  onClose: () => void;
 }
 
 const ImageCropper: React.FC<ImageCropperProps> = ({ imageSrc, onCropComplete, onClose }) => {
@@ -35,7 +35,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ imageSrc, onCropComplete, o
       }
     } catch (e) {
       console.error(e);
-      onCropComplete(null); // Báo lỗi nếu có vấn đề
+      onCropComplete(null);
       onClose();
     }
   };
@@ -51,11 +51,11 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ imageSrc, onCropComplete, o
             image={imageSrc}
             crop={crop}
             zoom={zoom}
-            aspect={1 / 1} // Tỷ lệ 1:1 cho ảnh đại diện
+            aspect={1 / 1}
             onCropChange={onCropChange}
             onZoomChange={onZoomChange}
             onCropComplete={onCropCompleteHandler}
-            cropShape="round" // Cắt hình tròn cho avatar
+            cropShape="round"
             showGrid={false}
           />
         </div>
