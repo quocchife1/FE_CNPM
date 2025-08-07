@@ -62,8 +62,8 @@ const EditProfile: React.FC = () => {
 
   
   const [showCropper, setShowCropper] = useState(false);
-  const [imageToCrop, setImageToCrop] = useState<string | null>(null); // URL của ảnh gốc để truyền vào cropper
-  // Fix: Khởi tạo useRef với null
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [showImageModal, setShowImageModal] = useState(false);

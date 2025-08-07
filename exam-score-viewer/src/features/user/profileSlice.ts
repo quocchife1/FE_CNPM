@@ -1,3 +1,4 @@
+// exam-score-viewer/src/features/user/profileSlice.ts
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import {
   fetchProfileById,
